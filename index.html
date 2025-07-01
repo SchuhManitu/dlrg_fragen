@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DLRG Fragenkatalog</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+      text-align: center;
+    }
+
+    input {
+      padding: 10px;
+      font-size: 16px;
+      margin: 10px 0;
+      width: 200px;
+    }
+
+    .keypad {
+      display: grid;
+      grid-template-columns: repeat(3, 60px);
+      gap: 10px;
+      justify-content: center;
+      margin-top: 10px;
+    }
+
+    .keypad button {
+      padding: 15px;
+      font-size: 18px;
+      cursor: pointer;
+    }
+
+    #answer {
+      margin-top: 20px;
+      font-size: 18px;
+      color: blue;
+    }
+  </style>
+</head>
+<body>
+  <h1>DLRG Fragenkatalog</h1>
+  <p>Geben Sie die Nummer ein, um die richtige Antwort zu sehen:</p>
+
+  <input type="number" id="questionNumber" placeholder="Fragen-Nummer" readonly>
+  
+  <div class="keypad">
+    <button onclick="appendNumber(1)">1</button>
+    <button onclick="appendNumber(2)">2</button>
+    <button onclick="appendNumber(3)">3</button>
+    <button onclick="appendNumber(4)">4</button>
+    <button onclick="appendNumber(5)">5</button>
+    <button onclick="appendNumber(6)">6</button>
+    <button onclick="appendNumber(7)">7</button>
+    <button onclick="appendNumber(8)">8</button>
+    <button onclick="appendNumber(9)">9</button>
+    <button onclick="clearInput()">C</button>
+    <button onclick="appendNumber(0)">0</button>
+    <button onclick="deleteLast()">←</button>
+  </div>
+
+  <button onclick="getAnswer()">Antwort anzeigen</button>
+
+  <div id="answer"></div>
+
+  <script>
+    let data = [];
+
+    // JSON laden
+    fetch('fragen_und_antworten.json')
+      .then(response => response.json())
+      .then(json => { data = json; })
+      .catch(err => console.error('Fehler beim Laden der Daten:', err));
+
+    function getAnswer() {
+      const number = parseInt(document.getElementById('questionNumber').value, 10);
+      const result = data.find(item => item.Nummer === number);
+      const answerDiv = document.getElementById('answer');
+      if (result) {
+        answerDiv.textContent = `Antwort: ${result.Antwort}`;
+      } else {
+        answerDiv.textContent = 'Keine Antwort für diese Nummer gefunden.';
+      }
+    }
+
+    function appendNumber(num) {
+      const input = document.getElementById('questionNumber');
+      input.value += num;
+    }
+
+    function clearInput() {
+      document.getElementById('questionNumber').value = '';
+    }
+
+    function deleteLast() {
+      const input = document.getElementById('questionNumber');
+      input.value = input.value.slice(0, -1);
+    }
+  </script>
+</body>
+</html>
